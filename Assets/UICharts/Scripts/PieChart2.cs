@@ -105,21 +105,16 @@ public class PieChart2 : MonoBehaviour
         OrangeTextObj.GetComponent<TextMeshProUGUI>().SetText(O.ToString());
         BlueTextObj.GetComponent<TextMeshProUGUI>().SetText(B.ToString());
 
-
-
-
         // calc sum
         float sum = O + B;
 
-        print(sum);
-        print(O / B);
 
         // set percentage
         // OrangePie.fillAmount = O / sum;
         // BluePie.fillAmount = 1;
         
 
-
+        // play fill animation
         StartCoroutine(fill(O / sum, 1));
     }
 
@@ -165,11 +160,25 @@ public class PieChart2 : MonoBehaviour
         ModificationPopupRef.SetActive(true);
     }
 
+
+    public void CloseButton()
+    {
+
+        // clear input field
+        BlueInput.text = "";
+        OrangeInput.text = "";
+
+        ModificationPopupRef.SetActive(false);
+    }
     
     // confirm button event
     public void ValueChangeConfirmButtonEvent()
     {
-        ModificationPopupRef.SetActive(false);
+
+
+        // return if both input are empty
+        if (BlueInput.text == "" && OrangeInput.text == "") return;
+
 
         // parse string to int
         if (BlueInput.text != "")
@@ -190,7 +199,7 @@ public class PieChart2 : MonoBehaviour
         BlueInput.text = "";
         OrangeInput.text = "";
 
-
+        ModificationPopupRef.SetActive(false);
     }
 
 
