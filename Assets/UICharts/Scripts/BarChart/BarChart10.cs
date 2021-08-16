@@ -51,6 +51,10 @@ public class BarChart10 : MonoBehaviour
     [SerializeField] bool ShowScale;
 
 
+    // panel
+    [SerializeField] GameObject AddBarPanel;
+
+
     void Start()
     {
         
@@ -67,18 +71,20 @@ public class BarChart10 : MonoBehaviour
         // AllScales = new List<GameObject>();
         // AllBarDatas = new List<float>();
 
-        // InitBarContainer();
 
-
-
-        AddRandomColorBar(AllBarDatas[0]);
-        AddRandomColorBar(AllBarDatas[1]);
-        AddRandomColorBar(AllBarDatas[2]);
-
-
-
+        // init container
+        InitBarContainer();
         InitScaleContainer();
 
+
+
+        foreach (var item in AllBarDatas)
+        {
+            print(item);
+        }
+
+        // play animation every 5 seconds starting after 5 seconds
+        InvokeRepeating("BarGrowingAnimation", 5.0f, 5.0f);
 
     }
 
@@ -94,7 +100,7 @@ public class BarChart10 : MonoBehaviour
         if (AllBarDatas.Count == 0) return;
 
         // create bars according to datas
-
+        CreateBarsAccordingToData();
     }
 
 
@@ -126,8 +132,56 @@ public class BarChart10 : MonoBehaviour
     }
 
 
-    // create a random bar with random color and data and add it to the container
-    void AddRandomColorBar(float data)
+    // add bars
+    void CreateBarsAccordingToData()
+    {
+        foreach (var item in AllBarDatas)
+        {
+            AddExistingRandomColorBar(item);
+        }
+    }
+
+
+    // add a bar with existing data in the data array
+    void AddExistingRandomColorBar(float data)
+    {
+        // instantiate new bar
+        var newBar = Instantiate(BarPrefab);
+        var newBarScript = newBar.GetComponent<BarScript>();
+
+        // random color
+        newBarScript.BarColor = new Color(Random.Range(0.4f, 1f), Random.Range(0.4f, 1f), Random.Range(0.4f, 1f));
+      
+        // random data
+        // var newData = Random.Range(1,10000);
+        var newData = data;
+
+        // set data to bar
+        newBarScript.setData(newData);
+
+        // no bottom tag
+        newBarScript.setBottomTag("");
+        
+        // push data to the data list
+        // AllBarDatas.Add(newData);
+
+        // add to bar list
+        AllBars.Add(newBar); 
+
+        // set max data
+        SetMaxData();
+
+        // resize all bars in the bar list
+        ResizeAllBars();
+
+        // add to container
+        AddBarToBarContainer(newBar);
+    }
+
+
+    // create a new random bar with random color and data and add it to the container
+    // and append data to datas array
+    void AddNewRandomColorBar(float data)
     {
         // instantiate new bar
         var newBar = Instantiate(BarPrefab);
@@ -143,6 +197,9 @@ public class BarChart10 : MonoBehaviour
         // set data to bar
         newBarScript.setData(newData);
         
+        // no bottom tag
+        newBarScript.setBottomTag("");
+
         // push data to the data list
         AllBarDatas.Add(newData);
 
@@ -162,6 +219,85 @@ public class BarChart10 : MonoBehaviour
     }
 
 
+    // add new bar with specific color and bottom tag
+    void AddNewColoredBar(float data, Color color, string botTag)
+    {
+        // instantiate new bar
+        var newBar = Instantiate(BarPrefab);
+        var newBarScript = newBar.GetComponent<BarScript>();
+
+        // random color
+        newBarScript.BarColor = color;
+      
+        // random data
+        // var newData = Random.Range(1,10000);
+        var newData = data;
+
+        // set data to bar
+        newBarScript.setData(newData);
+
+        // set bottom tag
+        newBarScript.setBottomTag(botTag);
+        
+        // push data to the data list
+        AllBarDatas.Add(newData);
+
+        // add to bar list
+        AllBars.Add(newBar); 
+
+        // set max data
+        SetMaxData();
+
+        // resize all bars in the bar list
+        ResizeAllBars();
+
+        // add to container
+        AddBarToBarContainer(newBar);
+    }
+
+    // add existing bar with specific color
+    void AddExistingColoredBar(float data, Color color, string botTag)
+    {
+        // instantiate new bar
+        var newBar = Instantiate(BarPrefab);
+        var newBarScript = newBar.GetComponent<BarScript>();
+
+        // random color
+        newBarScript.BarColor = color;
+      
+        // random data
+        // var newData = Random.Range(1,10000);
+        var newData = data;
+
+        // set data to bar
+        newBarScript.setData(newData);
+        
+        // set bottom tag
+        newBarScript.setBottomTag(botTag);
+        
+        // push data to the data list
+        // AllBarDatas.Add(newData);
+
+        // add to bar list
+        AllBars.Add(newBar); 
+
+        // set max data
+        SetMaxData();
+
+        // resize all bars in the bar list
+        ResizeAllBars();
+
+        // add to container
+        AddBarToBarContainer(newBar);
+    }
+
+
+    
+    // get data for specific bar
+    float GetBarData(int index)
+    {
+        return AllBars[index + 1].GetComponent<BarScript>().GetData();
+    }
 
 
 
@@ -220,6 +356,23 @@ public class BarChart10 : MonoBehaviour
     void SetYNote(string note)
     {
         YNote.SetText(note);
+    }
+
+
+    void BarGrowingAnimation()
+    {
+        foreach (var item in AllBars)
+        {
+            item.GetComponent<BarScript>().PlayAnimation();
+        }
+    }
+
+
+
+    public void ShowAddBarPanel()
+    {
+        if (AddBarPanel.activeInHierarchy == true) return;
+        AddBarPanel.SetActive(true);
     }
 
 

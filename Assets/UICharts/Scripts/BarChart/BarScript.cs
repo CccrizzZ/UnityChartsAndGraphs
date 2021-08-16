@@ -39,6 +39,11 @@ public class BarScript : MonoBehaviour
     public Color BarColor;
 
 
+    public void PlayAnimation()
+    {
+        StartCoroutine(fill());
+    }
+
     void Start()
     {
         // set max data to data if it is not set
@@ -48,8 +53,8 @@ public class BarScript : MonoBehaviour
         gameObject.GetComponent<Image>().color = BarColor;
 
         // set bar height
-        gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(BarWidth, BarHight * (Data / MaxData));
-
+        // gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(BarWidth, BarHight * (Data / MaxData));
+        PlayAnimation();
 
 
         // init or hide top tag
@@ -68,7 +73,7 @@ public class BarScript : MonoBehaviour
         if (!BottomTag) BottomTag.gameObject.SetActive(false);
         
 
-
+        
 
     }
 
@@ -81,7 +86,7 @@ public class BarScript : MonoBehaviour
     // resize bar
     public void ReSize()
     {
-        gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(BarWidth, BarHight * (Data / MaxData));
+        GetComponent<RectTransform>().sizeDelta = new Vector2(BarWidth, BarHight * (Data / MaxData));
     }
 
 
@@ -103,5 +108,47 @@ public class BarScript : MonoBehaviour
     }
 
 
+    // return this bars data
+    public float GetData()
+    {
+        return Data;
+    }
 
+
+
+    IEnumerator fill()
+    {
+        // reset the bars
+        ResetBars();
+        
+
+
+        // set duration
+        float duration = 1.0f;
+
+        // set interpolation value
+        float t = 0.05f;
+
+    
+        // start lerping
+        while (t < 1.0f)
+        {
+            // set time
+            t += Time.deltaTime / duration;
+
+            // lerp the fill amount of pies
+            GetComponent<RectTransform>().sizeDelta = new Vector2(BarWidth, Mathf.Lerp(0f, BarHight * (Data / MaxData), t));
+
+
+            yield return null;
+        }
+    }
+
+
+    // reset bars height to 0
+    void ResetBars()
+    {
+        GetComponent<RectTransform>().sizeDelta = new Vector2(0f,0f);
+
+    }
 }
