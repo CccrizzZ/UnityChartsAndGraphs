@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5545246603098235638}
   - component: {fileID: 41271416055010985}
   m_Layer: 5
-  m_Name: Scale
+  m_Name: YScale
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

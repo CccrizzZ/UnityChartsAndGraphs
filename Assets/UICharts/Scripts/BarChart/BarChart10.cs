@@ -22,12 +22,17 @@ public class BarChart10 : MonoBehaviour
 
     // array for all the bars and scales
     public List<GameObject> AllBars;
-    public List<GameObject> AllScales;
+    // public List<GameObject> AllScales;
     
 
     // array for bar data
     public List<float> AllBarDatas;
     
+
+    public string XNoteInput;
+    public string YNoteInput;
+
+
 
     // bar and scale prefab
     [SerializeField] GameObject BarPrefab;
@@ -66,25 +71,18 @@ public class BarChart10 : MonoBehaviour
         if (!ShowScale) ScaleContainer.gameObject.SetActive(false);
 
 
-        // init lists
-        // AllBars = new List<GameObject>();
-        // AllScales = new List<GameObject>();
-        // AllBarDatas = new List<float>();
+        XNote.SetText(XNoteInput);
+        YNote.SetText(YNoteInput);
 
 
         // init container
         InitBarContainer();
-        InitScaleContainer();
+        UpdateScaleContainer();
 
-
-
-        foreach (var item in AllBarDatas)
-        {
-            print(item);
-        }
 
         // play animation every 5 seconds starting after 5 seconds
         InvokeRepeating("BarGrowingAnimation", 5.0f, 5.0f);
+
 
     }
 
@@ -104,14 +102,26 @@ public class BarChart10 : MonoBehaviour
     }
 
 
-    void InitScaleContainer()
+    public void UpdateScaleContainer()
     {
 
-        // calculate section size according to max data value and number of scale lines
-        var section = MaxData / ScaleLineCount - 1;
+        // return if no max data
+        if (MaxData == 0) return;
+        
 
-        var x = ScaleLineCount;
-        // for (int i = 1; i <= ScaleLineCount; i++)
+        if (ScaleContainer.transform.childCount !=0)
+        {
+            foreach (Transform child in ScaleContainer.transform) 
+            {
+                GameObject.Destroy(child.gameObject);
+            }
+        }
+
+
+        // calculate section size according to max data value and number of scale lines
+        var section = MaxData / ScaleLineCount;
+
+        // create scale object
         for (int i = ScaleLineCount; i >= 1; i--)
         {
 
@@ -121,15 +131,16 @@ public class BarChart10 : MonoBehaviour
 
 
             // data will be section * scaleline count
-            newScaleScript.Data = section * x;
+            newScaleScript.SetScaleData(section * i);
 
 
             // append scale lines to the scale container
-            AddScaleToScaleContaine(newScaleLine);
+            AddScaleToScaleContainer(newScaleLine);
 
-            // ScaleLineCount--;
         }
     }
+
+
 
 
     // add bars
@@ -220,7 +231,7 @@ public class BarChart10 : MonoBehaviour
 
 
     // add new bar with specific color and bottom tag
-    void AddNewColoredBar(float data, Color color, string botTag)
+    public void AddNewColoredBar(float data, Color color, string botTag)
     {
         // instantiate new bar
         var newBar = Instantiate(BarPrefab);
@@ -296,7 +307,7 @@ public class BarChart10 : MonoBehaviour
     // get data for specific bar
     float GetBarData(int index)
     {
-        return AllBars[index + 1].GetComponent<BarScript>().GetData();
+        return AllBars[index - 1].GetComponent<BarScript>().GetData();
     }
 
 
@@ -308,7 +319,7 @@ public class BarChart10 : MonoBehaviour
     }
     
     // append new scale line to scale container
-    void AddScaleToScaleContaine(GameObject NewScale)
+    void AddScaleToScaleContainer(GameObject NewScale)
     {
         NewScale.transform.SetParent(ScaleContainer.transform, false);
     }
@@ -325,7 +336,7 @@ public class BarChart10 : MonoBehaviour
     }
 
 
-    // set max data and resize all bars
+    // set max data
     void SetMaxData()
     {
         // return if list empty
@@ -343,20 +354,14 @@ public class BarChart10 : MonoBehaviour
         }
         MaxData = max;
 
+
+
     }
 
 
 
 
 
-    void SetXNote(string note)
-    {
-        XNote.SetText(note);
-    }
-    void SetYNote(string note)
-    {
-        YNote.SetText(note);
-    }
 
 
     void BarGrowingAnimation()
@@ -375,6 +380,27 @@ public class BarChart10 : MonoBehaviour
         AddBarPanel.SetActive(true);
     }
 
+    public void PopBars()
+    {
+        // return if no bars to pop
+        if (AllBars.Count == 0) return;
 
+        // pop bars
+        Destroy(BarContainer.transform.GetChild(BarContainer.transform.childCount-1).gameObject);
+
+        // update arrays
+        AllBars.RemoveAt(AllBars.Count-1);
+        AllBarDatas.RemoveAt(AllBarDatas.Count-1);
+
+        // update datas
+        SetMaxData();
+        foreach (var item in AllBars)
+        {
+            item.GetComponent<BarScript>().MaxData = MaxData;
+            item.GetComponent<BarScript>().PlayAnimation();
+        }
+        UpdateScaleContainer();
+
+    }
 
 }

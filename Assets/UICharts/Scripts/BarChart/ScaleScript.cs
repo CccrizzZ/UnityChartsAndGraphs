@@ -8,6 +8,8 @@ public class ScaleScript : MonoBehaviour
 
     public float Data;
 
+    public string S_Data;
+
     public TextMeshProUGUI ScaleData;
 
     public bool ShowScaleData;
@@ -16,11 +18,18 @@ public class ScaleScript : MonoBehaviour
     {
         // set scale data visibility according to flag
         if (!ShowScaleData) ScaleData.gameObject.SetActive(false);
+
+        // SetStringData(S_Data);
     }
 
     public void SetScaleData(float d)
     {
-        Data = d;
+        Data = Mathf.Round(d);
         ScaleData.SetText(Data.ToString());
+    }
+
+    public void SetStringData(string s)
+    {
+        ScaleData.SetText(s);
     }
 }

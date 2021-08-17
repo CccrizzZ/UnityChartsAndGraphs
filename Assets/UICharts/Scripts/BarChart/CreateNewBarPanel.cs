@@ -18,16 +18,8 @@ public class CreateNewBarPanel : MonoBehaviour
     [SerializeField] GameObject BarPreview;
 
 
-
-
     [SerializeField] BarChart10 BarChartController;
 
-    
-
-    void Start()
-    {
-        
-    }
 
     void Update()
     {
@@ -47,10 +39,12 @@ public class CreateNewBarPanel : MonoBehaviour
         if (DataInput.text == "") return;
 
         // create bar
-        
+        BarChartController.AddNewColoredBar(float.Parse(DataInput.text), new Color(R.value, G.value, B.value), TagInput.text);
 
+        // update scale in case max value changed
+        BarChartController.UpdateScaleContainer();
 
-
+        // clear data and close the popup
         ClearData();
         gameObject.SetActive(false);
 
@@ -58,7 +52,12 @@ public class CreateNewBarPanel : MonoBehaviour
 
     void ClearData()
     {
-
+        DataInput.text = "";
+        TagInput.text = "";
+        R.value = 0;
+        G.value = 0;
+        B.value = 0;
+        
     }
 
 
