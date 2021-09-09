@@ -17,13 +17,23 @@ public class Dots : MonoBehaviour
     // biggest number in the data array
     float MaxData;
 
-    [SerializeField] GameObject DotObj;
+    public GameObject DotObj;
 
 
     [SerializeField] TextMeshProUGUI IndicatorText;
 
 
+    [SerializeField] LineRenderer Line;
+
+    public GameObject NextDot;
+    public GameObject NextXScale;
+
+    Vector2 DotPosition;
+
     float StartRectY;
+
+
+
 
     void Start()
     {
@@ -38,8 +48,15 @@ public class Dots : MonoBehaviour
 
     public void setDotHeightAccordingToData()
     {
-        print (data / MaxData);
-        DotObj.GetComponent<RectTransform>().localPosition = new Vector2(0, (data / MaxData ) * maxHeight /2);
+        // print (data / MaxData);
+        // DotObj.GetComponent<RectTransform>().localPosition = new Vector2(0, (data / MaxData ) * maxHeight /2);
+        DotPosition = new Vector2(0, (data / MaxData ) * maxHeight );
+        DotObj.GetComponent<RectTransform>().localPosition = DotPosition;
+        
+
+
+        // print( data + " ----- " + (data / MaxData ) * maxHeight);
+
         PlayAnimation();
 
     }
@@ -77,9 +94,11 @@ public class Dots : MonoBehaviour
             t += Time.deltaTime / duration;
 
             // lerp the fill amount of pies
-            DotObj.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Lerp(StartRectY, (data / MaxData / 2) * maxHeight, t));
+            DotObj.GetComponent<RectTransform>().localPosition = new Vector2(0, Mathf.Lerp(StartRectY, DotPosition.y, t));
 
 
+            // keeps the line connected
+            ConnectDotToNextDot();
             yield return null;
         }
     }
@@ -96,4 +115,23 @@ public class Dots : MonoBehaviour
     {
         StartCoroutine(fill());
     }
+
+
+    public void HideLine()
+    {
+        Line.gameObject.SetActive(false);
+    }
+
+    
+    public void ConnectDotToNextDot()
+    {
+        if (!NextXScale) return;
+
+        Line.SetPosition(0, new Vector3(0 , 0 + DotObj.GetComponent<RectTransform>().anchoredPosition.y - 175f, 0));
+        Line.SetPosition(1, new Vector3(NextXScale.GetComponent<RectTransform>().anchoredPosition.x - GetComponent<RectTransform>().anchoredPosition.x , NextDot.GetComponent<RectTransform>().anchoredPosition.y - 175f, 0));
+
+        
+
+    }
+
 }

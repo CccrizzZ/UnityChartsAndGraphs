@@ -72,26 +72,20 @@ public class LineGraph : MonoBehaviour
         CreateDotsFromDataArray();
 
 
-
         // set the scale notes / unit
         XNote.SetText(XNoteInput);
         YNote.SetText(YNoteInput);
-
-
 
 
         if (!PlayAnimation)return;
         // play animation every 5 seconds starting after 5 seconds
         InvokeRepeating("LineGrowingAnimation", 5.0f, 5.0f);
 
+        // connect all the dots in the graph
+        ConnectAllTheDots();
+
 
     }
-
-    void Update()
-    {
-        
-    }
-
 
     void CreateDotsFromDataArray()
     {
@@ -214,6 +208,23 @@ public class LineGraph : MonoBehaviour
         {
             item.GetComponent<Dots>().PlayAnimation();
         }
+    }
+
+
+
+
+
+    void ConnectAllTheDots()
+    {
+        for (int i = 0; i < AllDots.Count - 1; i++)
+        {
+            var Dot = AllDots[i].GetComponent<Dots>();
+            Dot.NextDot = AllDots[i + 1].GetComponent<Dots>().DotObj;
+            Dot.NextXScale = AllDots[i + 1];
+            Dot.ConnectDotToNextDot();
+        
+        }
+
     }
 
 }

@@ -14,12 +14,17 @@ public class ScaleScript : MonoBehaviour
 
     public bool ShowScaleData;
 
+
+
     void Start()
     {
         // set scale data visibility according to flag
         if (!ShowScaleData) ScaleData.gameObject.SetActive(false);
 
         // SetStringData(S_Data);
+    
+
+
     }
 
     public void SetScaleData(float d)
